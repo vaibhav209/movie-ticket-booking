@@ -3,8 +3,6 @@
 This is a simple Movie Ticket Booking application built using React and Redux. It allows users to browse and book movie tickets for various movies. The app provides a seamless experience for selecting seats, confirming the booking, and making payments. Please note that this version of the app does not include authentication, and it is intended for demonstration purposes only.
 
 
-LIVE: <a href="https://cinebookinghub.netlify.app/" target="_blank">CineBookingHub</a>
-
 
 ## Features
 
