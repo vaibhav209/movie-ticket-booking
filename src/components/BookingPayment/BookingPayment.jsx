@@ -1,54 +1,67 @@
-import React, { useState } from "react";
-import { Form, Button } from "react-bootstrap";
-import { useNavigate } from "react-router-dom";
-import routes from "../../routes/routes.json";
+import React, { useState } from 'react';
+import { Form, Button } from 'react-bootstrap';
+import { useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
+import routes from '../../routes/routes.json';
 
 const BookingPayment = () => {
-  const [cardName, setCardName] = useState("");
-  const [cardNumber, setCardNumber] = useState("");
-  const [cardCvv, setCardCvv] = useState("");
-  const [cardType, setCardType] = useState("");
-  const [upiNumber, setUpiNumber] = useState("");
-  const [upiPin, setUpiPin] = useState("");
+  const [cardNumber, setCardNumber] = useState('');
+  const [cardOtp, setCardOtp] = useState('');
+  const [cardType, setCardType] = useState('');
+  const [upiNumber, setUpiNumber] = useState('');
+  const [upiOtp, setUpiOtp] = useState('');
 
   const navigate = useNavigate();
+
+  const ticketPrice = useSelector((state) => state.ticket.ticketPrice);
 
   const cardTypeHandler = (e) => {
     setCardType(e.target.value);
   };
 
-  const cardNameHandler = (e) => {
-    setCardName(e.target.value.toUpperCase());
-  };
-
   const cardNumberHandler = (e) => {
-    setCardNumber(e.target.value);
+    const value = e.target.value;
+    const digitsOnly = value.replace(/\D/g, '');
+
+    setCardNumber(digitsOnly);
   };
 
-  const cardCvvHandler = (e) => {
-    setCardCvv(e.target.value);
+  const cardOtpHandler = (e) => {
+    const value = e.target.value;
+    const digitsOnly = value.replace(/\D/g, '');
+
+    setCardOtp(digitsOnly);
   };
 
   const upiNumberHandler = (e) => {
     setUpiNumber(e.target.value);
   };
 
-  const upiPinHandler = (e) => {
-    setUpiPin(e.target.value);
+  const upiOtpHandler = (e) => {
+    const value = e.target.value;
+    const digitsOnly = value.replace(/\D/g, '');
+
+    setUpiOtp(digitsOnly);
   };
 
   const payHandler = () => {
-    if (cardType === "card" && (!cardName || !cardNumber || !cardCvv)) {
-      alert("Please fill all the card details properly");
-    } else if (cardType === "upi" && (!upiNumber || !upiPin)) {
-      alert("Please fill all the UPI details properly");
+    if (
+      cardType === 'card' &&
+      (!cardNumber || !cardOtp || cardNumber.length < 16 || cardOtp.length < 4)
+    ) {
+      alert('Please fill all the card details properly');
+    } else if (
+      cardType === 'upi' &&
+      (!upiNumber || !upiOtp || upiNumber.length < 4 || upiOtp.length < 4)
+    ) {
+      alert('Please fill all the UPI details properly');
     } else {
-      alert("Payment successful! Get ready to enjoy the movie!");
+      alert('Payment successful! Get ready to enjoy the movie!');
       navigate(routes.HOME);
     }
   };
 
-  const imgUrl = "https://lajoyalink.com/wp-content/uploads/2018/03/Movie.jpg";
+  const imgUrl = 'https://lajoyalink.com/wp-content/uploads/2018/03/Movie.jpg';
 
   return (
     <div className="d-flex justify-content-left-3">
@@ -57,22 +70,23 @@ const BookingPayment = () => {
           <img
             src={imgUrl}
             alt="Payment Illustration"
-            style={{ width: "530pt", height: "355pt", marginTop: "10px" }}
+            style={{ width: '530pt', height: '355pt', marginTop: '10px' }}
           />
 
           <div
             style={{
-              marginLeft: "30pt",
-              marginRight: "30pt",
-              marginTop: "10px",
-              width: "100%"
+              marginLeft: '30pt',
+              marginRight: '30pt',
+              marginTop: '10px',
+              width: '100%',
             }}
             className="ml-3"
           >
             <Form>
               <Form.Group className="mb-3">
                 <h4 className="mb-4">Proceed to Payment</h4>
-                <div>
+                Total : {ticketPrice}/-
+                <div className="mt-3">
                   <Form.Check
                     label="Credit Card"
                     type="radio"
@@ -97,19 +111,9 @@ const BookingPayment = () => {
                 </div>
               </Form.Group>
 
-              {cardType === "card" && (
+              {cardType === 'card' && (
                 <>
-                  <Form.Group className="mb-3">
-                    <Form.Label>Card Holder Name</Form.Label>
-                    <Form.Control
-                      type="text"
-                      placeholder="Enter Name"
-                      value={cardName}
-                      onChange={cardNameHandler}
-                    />
-                  </Form.Group>
-
-                  <Form.Group className="mb-3">
+                  <Form.Group className="mb-4">
                     <Form.Label>Card Number</Form.Label>
                     <Form.Control
                       type="text"
@@ -120,21 +124,20 @@ const BookingPayment = () => {
                     />
                   </Form.Group>
 
-                  <Form.Group className="mb-3">
-                    <Form.Label>Enter CVV</Form.Label>
+                  <Form.Group className="mb-4">
+                    <Form.Label>Enter OTP</Form.Label>
                     <Form.Control
-                      type="tel"
-                      inputMode="numeric"
-                      maxLength="3"
-                      placeholder="Enter CVV"
-                      value={cardCvv}
-                      onChange={cardCvvHandler}
+                      type="text"
+                      maxLength="4"
+                      placeholder="Enter OTP"
+                      value={cardOtp}
+                      onChange={cardOtpHandler}
                     />
                   </Form.Group>
                 </>
               )}
 
-              {cardType === "upi" && (
+              {cardType === 'upi' && (
                 <>
                   <Form.Group className="mb-3">
                     <Form.Label>UPI ID</Form.Label>
@@ -147,12 +150,13 @@ const BookingPayment = () => {
                   </Form.Group>
 
                   <Form.Group className="mb-3">
-                    <Form.Label>UPI PIN</Form.Label>
+                    <Form.Label>Enter OTP</Form.Label>
                     <Form.Control
-                      type="password"
-                      placeholder="Enter UPI PIN"
-                      value={upiPin}
-                      onChange={upiPinHandler}
+                      type="text"
+                      maxLength="4"
+                      placeholder="Enter OTP"
+                      value={upiOtp}
+                      onChange={upiOtpHandler}
                     />
                   </Form.Group>
                 </>
@@ -161,12 +165,11 @@ const BookingPayment = () => {
               <div className="d-flex justify-content-end">
                 <Button
                   variant="danger"
-                  style={{ width: "100%" }}
+                  style={{ width: '100%' }}
                   disabled={
                     !cardType ||
-                    (cardType === "card" &&
-                      (!cardName || !cardNumber || !cardCvv)) ||
-                    (cardType === "upi" && (!upiNumber || !upiPin))
+                    (cardType === 'card' && (!cardNumber || !cardOtp)) ||
+                    (cardType === 'upi' && (!upiNumber || !upiOtp))
                   }
                   onClick={payHandler}
                 >
